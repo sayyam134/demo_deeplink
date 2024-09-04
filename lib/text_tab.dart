@@ -11,7 +11,7 @@ class TextTab extends StatelessWidget {
           Text('This is a text post', style: TextStyle(fontSize: 24)),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => Share.share('This is a text post'),
+            onPressed: () => Share.share('Check out this text post:\n https://demodeeplink.com/text'),
             child: Text('Share'),
           ),
         ],

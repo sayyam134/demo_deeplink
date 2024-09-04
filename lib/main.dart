@@ -12,8 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: _router,
-      title: 'Flutter Navigation Bar with Deep Linking',
+      title: 'Flutter Bottom Navigation with Deep Linking',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -25,74 +26,90 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      redirect: (context, state) => '/text',
-    ),
-    GoRoute(
-      path: '/text',
-      builder: (context, state) => HomePage(tabIndex: 0),
-    ),
-    GoRoute(
-      path: '/image',
-      builder: (context, state) => HomePage(tabIndex: 1),
-    ),
-    GoRoute(
-      path: '/video',
-      builder: (context, state) => HomePage(tabIndex: 2),
+      builder: (context, state) => HomePage(),
+      routes: [
+        GoRoute(
+          path: 'text',
+          builder: (context, state) => HomePage(selectedIndex: 0),
+        ),
+        GoRoute(
+          path: 'image',
+          builder: (context, state) => HomePage(selectedIndex: 1),
+        ),
+        GoRoute(
+          path: 'video',
+          builder: (context, state) => HomePage(selectedIndex: 2),
+        ),
+      ]
     ),
   ],
 );
 
 class HomePage extends StatefulWidget {
-  final int tabIndex;
+  final int selectedIndex;
 
-  HomePage({required this.tabIndex});
+  HomePage({this.selectedIndex = 0}); // Default to the first tab
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _HomePageState extends State<HomePage> {
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.tabIndex);
+    _selectedIndex = widget.selectedIndex;
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        context.go('/text');
+        break;
+      case 1:
+        context.go('/image');
+        break;
+      case 2:
+        context.go('/video');
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Navigation Bar'),
-        bottom: TabBar(
-          controller: _tabController,
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                context.go('/text');
-                break;
-              case 1:
-                context.go('/image');
-                break;
-              case 2:
-                context.go('/video');
-                break;
-            }
-          },
-          tabs: [
-            Tab(text: 'Text'),
-            Tab(text: 'Image'),
-            Tab(text: 'Video'),
-          ],
-        ),
+        title: Text('Flutter Bottom Navigation'),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: IndexedStack(
+        index: _selectedIndex,
         children: [
           TextTab(),
           ImageTab(),
           VideoTab(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.text_fields),
+            label: 'Text',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.image),
+            label: 'Image',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.video_library),
+            label: 'Video',
+          ),
         ],
       ),
     );

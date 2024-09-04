@@ -8,10 +8,10 @@ class ImageTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.network('https://via.placeholder.com/150', width: 150, height: 150),
+          Image.asset('assets/logo.png', width: 300, height: 300),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => Share.share('Check out this image: https://via.placeholder.com/150'),
+            onPressed: () => Share.share('Check out this image:\n https://demodeeplink.com/image'),
             child: Text('Share'),
           ),
         ],
